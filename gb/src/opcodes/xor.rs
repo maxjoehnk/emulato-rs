@@ -62,6 +62,6 @@ impl OpCode for XOR {
         } else {
             Flags::empty()
         };
-        gb.register.pc += 1;
+        pc!(gb);
     }
 }

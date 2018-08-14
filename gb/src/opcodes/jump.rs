@@ -40,7 +40,7 @@ impl OpCode for Jump {
             JumpMode::NC => !gb.register.f.contains(Flags::C),
             JumpMode::C => gb.register.f.contains(Flags::C),
         };
-        gb.register.pc += 2;
+        pc!(gb, 2);
         if result {
             gb.register.pc = (gb.register.pc as i8 + self.target) as u16;
         }

@@ -25,6 +25,6 @@ impl OpCode for BIT {
         gb.register.f.remove(Flags::N);
         gb.register.f.set(Flags::H, true);
         gb.register.f.set(Flags::Z, result);
-        gb.register.pc += 2;
+        pc!(gb, 2);
     }
 }

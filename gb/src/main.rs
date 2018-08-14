@@ -2,9 +2,11 @@ extern crate byteorder;
 #[macro_use]
 extern crate bitflags;
 
-mod opcodes;
-mod gameboy;
+#[macro_use]
+mod macros;
 mod register;
+mod gameboy;
+mod opcodes;
 
 use opcodes::opcode::OpCode;
 

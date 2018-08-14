@@ -37,6 +37,6 @@ impl OpCode for LoadDecrementHLA {
         let a = gb.register.a;
         gb.ram[hl as usize] = a;
         gb.register.write_hl(hl - 1);
-        gb.register.pc += 1;
+        pc!(gb);
     }
 }
