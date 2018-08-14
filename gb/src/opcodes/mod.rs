@@ -26,7 +26,7 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
                 0x11 => load::Load16Bit::DE(data),
                 0x21 => load::Load16Bit::HL(data),
                 0x31 => load::Load16Bit::SP(data),
-                _ => panic!()
+                _ => unreachable!()
             };
             Some(Box::new(cmd))
         },
@@ -70,7 +70,7 @@ fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> {
                 0x7D => TargetRegister::L,
                 0x7E => TargetRegister::HL,
                 0x7F => TargetRegister::A,
-                _ => panic!("Invalid Opcode {}", opcode)
+                _ => unreachable!()
             };
             Some(Box::new(bit::BIT {
                 bit,
