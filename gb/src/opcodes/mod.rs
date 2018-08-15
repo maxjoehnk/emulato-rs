@@ -115,7 +115,6 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
         0xFA =>
             cmd!(load::LoadImmediateRamIntoRegisterA(u16!(rom))),
         _ => {
-            println!("Unknown OP Code 0x{:X?}", opcode);
             None
         }
     }

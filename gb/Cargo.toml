@@ -6,3 +6,4 @@ authors = ["Max Jöhnk <maxjoehnk@gmail.com>"]
 [dependencies]
 byteorder = "1.2.4"
 bitflags = "1.0"
+tui = "0.2.3"
