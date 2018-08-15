@@ -1,5 +1,6 @@
 use opcodes::opcode::OpCode;
 use gameboy::GameBoy;
+use std::fmt;
 
 #[derive(Debug)]
 pub enum Load8Bit {
@@ -9,12 +10,22 @@ impl OpCode for Load8Bit {
     fn exec(&self, gb: &mut GameBoy) {}
 }
 
-#[derive(Debug)]
 pub enum Load16Bit {
     BC(u16),
     DE(u16),
     HL(u16),
     SP(u16),
+}
+impl fmt::Debug for Load16Bit {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let register = match self {
+            Load16Bit::BC(d) => format!("BC,0x{:x?}", d),
+            Load16Bit::DE(d) => format!("DE,0x{:x?}", d),
+            Load16Bit::HL(d) => format!("HL,0x{:x?}", d),
+            Load16Bit::SP(d) => format!("SP,0x{:x?}", d)
+        };
+        write!(f, "LD {}", register)
+    }
 }
 impl OpCode for Load16Bit {
     fn exec(&self, gb: &mut GameBoy) {
@@ -28,9 +39,13 @@ impl OpCode for Load16Bit {
     }
 }
 
-#[derive(Debug)]
 pub struct LoadDecrementHLA;
 
+impl fmt::Debug for LoadDecrementHLA {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "LD (HL-),A")
+    }
+}
 impl OpCode for LoadDecrementHLA {
     fn exec(&self, gb: &mut GameBoy) {
         let hl = gb.register.read_hl();

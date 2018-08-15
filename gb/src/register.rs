@@ -86,6 +86,19 @@ impl Register {
         self.h = buf[0];
         self.l = buf[1];
     }
+
+    pub fn read_target(&self, target: &TargetRegister) -> u8 {
+        match target {
+            TargetRegister::A => self.a,
+            TargetRegister::B => self.b,
+            TargetRegister::C => self.c,
+            TargetRegister::D => self.d,
+            TargetRegister::E => self.e,
+            TargetRegister::H => self.h,
+            TargetRegister::L => self.l,
+            _ => unreachable!()
+        }
+    }
 }
 
 impl fmt::Debug for Register {

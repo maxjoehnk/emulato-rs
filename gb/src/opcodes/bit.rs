@@ -17,10 +17,7 @@ impl fmt::Debug for BIT {
 
 impl OpCode for BIT {
     fn exec(&self, gb: &mut GameBoy) {
-        let data = match self.register {
-            TargetRegister::H => gb.register.h,
-            _ => panic!()
-        };
+        let data = gb.register.read_target(&self.register);
         let result = data & self.bit == 0;
         gb.register.f.remove(Flags::N);
         gb.register.f.set(Flags::H, true);
