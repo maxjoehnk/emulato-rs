@@ -2,11 +2,11 @@ use gameboy::GameBoy;
 use opcodes::opcode::OpCode;
 use register::Flags;
 use std::fmt;
-use register::TargetRegister;
+use register::Register8;
 
 pub struct BIT {
     pub bit: u8,
-    pub register: TargetRegister
+    pub register: Register8
 }
 
 impl fmt::Debug for BIT {
@@ -17,7 +17,7 @@ impl fmt::Debug for BIT {
 
 impl OpCode for BIT {
     fn exec(&self, gb: &mut GameBoy) {
-        let data = gb.register.read_target(&self.register);
+        let data = gb.register.read_8bit_register(&self.register);
         let result = data & self.bit == 0;
         gb.register.f.remove(Flags::N);
         gb.register.f.set(Flags::H, true);

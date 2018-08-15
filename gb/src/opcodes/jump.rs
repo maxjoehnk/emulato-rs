@@ -12,6 +12,16 @@ enum JumpMode {
     C
 }
 
+/**
+ * JR cc,n
+ *
+ * n = one byte signed immediate value
+ *
+ * cc = NZ, Jump if Z flag is reset
+ * cc = Z, Jump if Z flag is set.
+ * cc = NC, Jump if C flag is reset.
+ * cc = C, Jump if C flag is set.
+ */
 pub struct Jump {
     pub target: i8,
     mode: JumpMode

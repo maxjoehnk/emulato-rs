@@ -12,6 +12,7 @@ bitflags! {
 }
 
 #[derive(Debug)]
+#[deprecated]
 pub enum TargetRegister {
     A,
     B,
@@ -20,6 +21,27 @@ pub enum TargetRegister {
     E,
     H,
     L,
+    SP,
+    PC,
+    AF,
+    BC,
+    DE,
+    HL
+}
+
+#[derive(Debug)]
+pub enum Register8 {
+    A,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L
+}
+
+#[derive(Debug)]
+pub enum Register16 {
     SP,
     PC,
     AF,
@@ -87,16 +109,55 @@ impl Register {
         self.l = buf[1];
     }
 
-    pub fn read_target(&self, target: &TargetRegister) -> u8 {
+    pub fn read_8bit_register(&self, target: &Register8) -> u8 {
         match target {
-            TargetRegister::A => self.a,
-            TargetRegister::B => self.b,
-            TargetRegister::C => self.c,
-            TargetRegister::D => self.d,
-            TargetRegister::E => self.e,
-            TargetRegister::H => self.h,
-            TargetRegister::L => self.l,
-            _ => unreachable!()
+            Register8::A => self.a,
+            Register8::B => self.b,
+            Register8::C => self.c,
+            Register8::D => self.d,
+            Register8::E => self.e,
+            Register8::H => self.h,
+            Register8::L => self.l
+        }
+    }
+
+    pub fn write_8bit_register(&mut self, target: &Register8, data: u8) {
+        let target = match target {
+            Register8::A => &mut self.a,
+            Register8::B => &mut self.b,
+            Register8::C => &mut self.c,
+            Register8::D => &mut self.d,
+            Register8::E => &mut self.e,
+            Register8::H => &mut self.h,
+            Register8::L => &mut self.l
+        };
+        *target = data;
+    }
+
+    pub fn read_16bit_register(&self, target: &Register16) -> u16 {
+        match target {
+            Register16::SP => self.sp,
+            Register16::PC => self.pc,
+            Register16::AF => self.read_af(),
+            Register16::BC => self.read_bc(),
+            Register16::DE => self.read_de(),
+            Register16::HL => self.read_hl()
+        }
+    }
+
+    pub fn get(&self, target: &Register8) -> u8 {
+        self.read_8bit_register(target)
+    }
+
+    pub fn get_mut(&mut self, target: &Register8) -> &mut u8 {
+        match target {
+            Register8::A => &mut self.a,
+            Register8::B => &mut self.b,
+            Register8::C => &mut self.c,
+            Register8::D => &mut self.d,
+            Register8::E => &mut self.e,
+            Register8::H => &mut self.h,
+            Register8::L => &mut self.l
         }
     }
 }

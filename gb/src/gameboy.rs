@@ -28,6 +28,10 @@ impl GameBoy {
 
         return gb;
     }
+
+    pub fn ram_mut(&mut self) -> &mut [u8; 0xffff] {
+        &mut self.ram
+    }
 }
 
 impl Iterator for GameBoy {
@@ -39,6 +43,7 @@ impl Iterator for GameBoy {
             println!("Reached end of Ram. Exiting...");
             return None;
         }
+
         let opcode = self.ram[pc];
 
         opcodes::parse_command(opcode, &self.ram[pc + 1..])
