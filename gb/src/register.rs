@@ -50,6 +50,14 @@ pub enum Register16 {
     HL
 }
 
+#[derive(Debug)]
+pub enum RegisterPair {
+    AF,
+    BC,
+    DE,
+    HL
+}
+
 #[derive(Default)]
 pub struct Register {
     pub a: u8, // Accumulator
@@ -65,6 +73,15 @@ pub struct Register {
 }
 
 impl Register {
+    pub fn pair(&self, pair: &RegisterPair) -> u16 {
+        match pair {
+            RegisterPair::AF => self.read_af(),
+            RegisterPair::BC => self.read_bc(),
+            RegisterPair::DE => self.read_de(),
+            RegisterPair::HL => self.read_hl(),
+        }
+    }
+
     pub fn read_af(&self) -> u16 {
         LittleEndian::read_u16(&[self.a, self.f.bits])
     }

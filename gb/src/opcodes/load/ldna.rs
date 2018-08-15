@@ -3,7 +3,7 @@ use opcodes::opcode::OpCode;
 use std::fmt;
 use register::{Register8, Register16};
 
-pub struct LoadIntoRegisterFromRegisterA(Register8);
+pub struct LoadIntoRegisterFromRegisterA(pub Register8);
 
 impl fmt::Debug for LoadIntoRegisterFromRegisterA {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

@@ -2,6 +2,7 @@ use std::fmt;
 use register::Register;
 use opcodes::opcode::OpCode;
 use opcodes;
+use byteorder::{LittleEndian, WriteBytesExt};
 
 pub struct GameBoy {
     pub register: Register,
@@ -31,6 +32,15 @@ impl GameBoy {
 
     pub fn ram_mut(&mut self) -> &mut [u8; 0xffff] {
         &mut self.ram
+    }
+
+    pub fn push_to_stack(&mut self, addr: u16) {
+        let mut data = vec![];
+        data.write_u16::<LittleEndian>(addr).unwrap();
+        let sp = self.register.sp as usize;
+        self.ram[sp] = data[0];
+        self.ram[sp - 1] = data[1];
+        self.register.sp -= 2;
     }
 }
 

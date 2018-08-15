@@ -1,6 +1,6 @@
 use byteorder::{LittleEndian, ByteOrder, ReadBytesExt};
 use register::TargetRegister;
-use register::{Register8, Register16};
+use register::{Register8, Register16, RegisterPair};
 
 macro_rules! cmd {
     ($cmd:expr) => (Some(Box::new($cmd)));
@@ -18,7 +18,12 @@ macro_rules! r8 {
     ($register:ident) => (Register8::$register);
 }
 
+macro_rules! rp {
+    ($register:ident) => (RegisterPair::$register);
+}
+
 pub mod opcode;
+mod call;
 mod bit;
 mod dec;
 mod inc;
@@ -26,6 +31,7 @@ mod jump;
 mod noop;
 mod load;
 mod xor;
+mod push;
 
 fn read_u16(data: &[u8]) -> u16 {
     LittleEndian::read_u16(&data[0..2])
@@ -100,8 +106,16 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
         /* */
         0xAF | 0xA8 | 0xA9 | 0xAA | 0xAB | 0xAC | 0xAD =>
             cmd!(xor::XOR::new(opcode)),
+        /* LD B,A */
+        0x47 =>
+            cmd!(load::LoadIntoRegisterFromRegisterA(r8!(B))),
+        /* LD C,A */
+        0x4F =>
+            cmd!(load::LoadIntoRegisterFromRegisterA(r8!(C))),
         /* CB */
         0xCB => parse_prefix_command(rom),
+        /* CALL nn */
+        0xCD => cmd!(call::Call(u16!(rom))),
         /* LDH (n),A */
         0xE0 =>
             cmd!(load::LoadRegisterAIntoZeroPageRam(rom[0])),
@@ -114,7 +128,20 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
         /* LD A,(n) */
         0xFA =>
             cmd!(load::LoadImmediateRamIntoRegisterA(u16!(rom))),
+        /* PUSH AF */
+        0xF5 =>
+            cmd!(push::Push(rp!(AF))),
+        /* PUSH BC */
+        0xC5 =>
+            cmd!(push::Push(rp!(BC))),
+        /* PUSH DE */
+        0xD5 =>
+            cmd!(push::Push(rp!(DE))),
+        /* PUSH HL */
+        0xE5 =>
+            cmd!(push::Push(rp!(HL))),
         _ => {
+            println!("Unknown OpCode {:#X?}", opcode);
             None
         }
     }
@@ -124,17 +151,21 @@ fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> {
     let opcode = rom[0];
     match opcode {
         /* RLC r */
-        0x00...0x07 => None,
+        0x00...0x07 => unimplemented!("RLC r"),
         /* RRC r */
-        0x08...0x0F => None,
+        0x08...0x0F => unimplemented!("RRC r"),
+        /* RL r */
+        0x10...0x17 => unimplemented!("RL r"),
+        /* RR r */
+        0x17...0x1F => unimplemented!("RR r"),
         /* SLA r */
-        0x10...0x17 => None,
+        0x20...0x27 => unimplemented!("SLA r"),
         /* SRA r */
-        0x17...0x1F => None,
+        0x27...0x2F => unimplemented!("SRA r"),
         /* BIT 0,r */
-        0x40...0x47 => None,
+        0x40...0x47 => unimplemented!("BIT 0,r"),
         /* BIT 1,r */
-        0x47...0x4F => None,
+        0x47...0x4F => unimplemented!("BIT 1,r"),
         /* BIT 7,r */
         0x78...0x7F => {
             let bit: u8 = 0b1000_0000;
