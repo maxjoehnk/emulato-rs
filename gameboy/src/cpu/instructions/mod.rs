@@ -110,6 +110,15 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         /* JR NZ,n */
         0x20 =>
             cmd!(jump::JumpRelative::nz(i8!(rom))),
+        /* JR Z,n */
+        0x28 =>
+            cmd!(jump::JumpRelative::z(i8!(rom))),
+        /* JR NC,n */
+        0x30 =>
+            cmd!(jump::JumpRelative::nc(i8!(rom))),
+        /* JR C,n */
+        0x38 =>
+            cmd!(jump::JumpRelative::c(i8!(rom))),
         /* LD (HL+),A */
         0x22 =>
             cmd!(load::LoadIncrementHLA),
