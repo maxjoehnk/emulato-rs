@@ -109,7 +109,7 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
             cmd!(load::LoadRegisterRamIntoRegisterA(rp!(HL))),
         /* JR NZ,n */
         0x20 =>
-            cmd!(jump::Jump::nz(i8!(rom))),
+            cmd!(jump::JumpRelative::nz(i8!(rom))),
         /* LD (HL+),A */
         0x22 =>
             cmd!(load::LoadIncrementHLA),

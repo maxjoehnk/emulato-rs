@@ -17,3 +17,29 @@ impl Instruction for Call {
         gb.register.pc = self.0;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use gameboy::GameBoy;
+
+    #[test]
+    fn it_should_set_the_pc() {
+        let mut gb = GameBoy::new();
+        gb.register.sp = 0xfffe;
+        let instruction = Call(0x1234);
+        instruction.exec(&mut gb);
+        assert_eq!(gb.register.pc, 0x1234);
+    }
+
+    #[test]
+    fn it_should_store_the_current_pc() {
+        let mut gb = GameBoy::new();
+        gb.register.sp = 0xfffe;
+        gb.register.pc = 0x0ff0;
+        let instruction = Call(0x1234);
+        instruction.exec(&mut gb);
+        assert_eq!(gb.ram[0xfffe], 0xf3);
+        assert_eq!(gb.ram[0xfffd], 0x0f);
+    }
+}

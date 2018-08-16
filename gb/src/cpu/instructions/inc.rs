@@ -63,6 +63,18 @@ impl Instruction for Increment16BitRegister {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use cpu::register::*;
+    use gameboy::GameBoy;
+
+    #[test]
+    fn it_should_increase_the_pc() {
+        let mut gb = GameBoy::new();
+        let instruction = IncrementRegister(Register8::A);
+        instruction.exec(&mut gb);
+        assert_eq!(gb.register.pc, 0x01);
+    }
+
     mod one_byte {
         use super::super::*;
         use cpu::register::*;
