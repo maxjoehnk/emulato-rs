@@ -1,7 +1,7 @@
 use std::fmt;
 use cpu::register::Register;
 use cpu::{instructions, Instruction};
-use byteorder::{LittleEndian, WriteBytesExt};
+use byteorder::{LittleEndian, WriteBytesExt, ByteOrder};
 
 pub struct GameBoy {
     pub register: Register,
@@ -40,6 +40,15 @@ impl GameBoy {
         self.ram[sp] = data[0];
         self.ram[sp - 1] = data[1];
         self.register.sp -= 2;
+    }
+
+    pub fn pop_from_stack(&mut self) -> u16 {
+        let sp = self.register.sp as usize;
+        let b1 = self.ram[sp + 1];
+        let b2 = self.ram[sp + 2];
+        self.register.sp += 2;
+
+        LittleEndian::read_u16(&[b1, b2])
     }
 }
 

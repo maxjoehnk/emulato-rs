@@ -13,20 +13,19 @@ impl fmt::Debug for DecrementRegister {
 
 impl Instruction for DecrementRegister {
     fn exec(&self, gb: &mut GameBoy) {
-        {
-            let (_before, after) = {
-                let register = gb.register.get_mut(&self.0);
-                let before = *register;
-                *register -= 1;
-                let after = *register;
-                (before, after)
-            };
-            let half_carry = false; // TODO: get half carry bit
-            let result = after == 0u8;
-            gb.register.f.set(Flags::Z, result);
-            gb.register.f.set(Flags::N, true);
-            gb.register.f.set(Flags::H, half_carry);
-        }
+        // Wrapping Decrement
+        let register = gb.register.get(&self.0);
+        let after = register.wrapping_sub(1);
+        gb.register.write_8bit_register(&self.0, after);
+
+        // Update Flags
+        let half_carry = false; // TODO: get half carry bit
+        let result = after == 0u8;
+        gb.register.f.set(Flags::Z, result);
+        gb.register.f.set(Flags::N, true);
+        gb.register.f.set(Flags::H, half_carry);
+
+        // Increment Program Counter
         pc!(gb);
     }
 }

@@ -25,19 +25,29 @@ pub enum Register8 {
 #[derive(Debug)]
 pub enum Register16 {
     SP,
-    PC,
     AF,
     BC,
     DE,
     HL
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub enum RegisterPair {
     AF,
     BC,
     DE,
     HL
+}
+
+impl From<RegisterPair> for Register16 {
+    fn from(pair: RegisterPair) -> Self {
+        match pair {
+            RegisterPair::AF => Register16::AF,
+            RegisterPair::BC => Register16::BC,
+            RegisterPair::DE => Register16::DE,
+            RegisterPair::HL => Register16::HL,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -136,11 +146,20 @@ impl Register {
     pub fn read_16bit_register(&self, target: &Register16) -> u16 {
         match target {
             Register16::SP => self.sp,
-            Register16::PC => self.pc,
             Register16::AF => self.read_af(),
             Register16::BC => self.read_bc(),
             Register16::DE => self.read_de(),
             Register16::HL => self.read_hl()
+        }
+    }
+
+    pub fn write_16bit_register(&mut self, target: &Register16, data: u16) {
+        match target {
+            Register16::SP => self.sp = data,
+            Register16::AF => self.write_af(data),
+            Register16::BC => self.write_bc(data),
+            Register16::DE => self.write_de(data),
+            Register16::HL => self.write_hl(data)
         }
     }
 

@@ -25,6 +25,10 @@ macro_rules! r8 {
     ($register:ident) => (Register8::$register);
 }
 
+macro_rules! r16 {
+    ($register:ident) => (Register16::$register);
+}
+
 macro_rules! rp {
     ($register:ident) => (RegisterPair::$register);
 }

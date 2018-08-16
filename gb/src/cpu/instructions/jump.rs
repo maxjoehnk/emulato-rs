@@ -51,7 +51,7 @@ impl Instruction for Jump {
         };
         pc!(gb, 2);
         if result {
-            gb.register.pc = (gb.register.pc as i8 + self.target) as u16;
+            gb.register.pc = (gb.register.pc as i16 + self.target as i16) as u16;
         }
     }
 }

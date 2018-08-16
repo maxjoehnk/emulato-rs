@@ -1,7 +1,7 @@
 use gameboy::GameBoy;
 use cpu::Instruction;
 use std::fmt;
-use cpu::register::{Register8, Register16, RegisterPair};
+use cpu::register::{Register8, RegisterPair};
 
 /**
  * LD A,n

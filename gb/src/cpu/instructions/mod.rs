@@ -1,9 +1,9 @@
 use byteorder::{LittleEndian, ByteOrder};
-use cpu::register::{Register8, RegisterPair};
+use cpu::register::{Register8, Register16, RegisterPair};
 use cpu::Instruction;
 
+mod alu;
 mod call;
-mod bit;
 mod dec;
 mod inc;
 mod jump;
@@ -11,12 +11,15 @@ mod noop;
 mod load;
 mod xor;
 mod push;
+mod ret;
+mod pop;
 
 pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
+    println!("{:#x?}", opcode);
     match opcode {
         /* NOP */
-        0x00 =>
-            cmd!(noop::NoOp),
+        //0x00 =>
+        //    cmd!(noop::NoOp),
         /* LD BC,nn */
         0x01 =>
             cmd!(load::Load16Bit::BC(u16!(rom))),
@@ -32,6 +35,21 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         /* LD (r),A */
         0x02 | 0x12 | 0x77 =>
             cmd!(load::LoadIntoRegisterRamFromRegisterA::new(opcode)),
+        /* RLA */
+        0x17 =>
+            cmd!(alu::RotateRegisterALeft),
+        /* INC BC */
+        0x03 =>
+            cmd!(inc::Increment16BitRegister(r16!(BC))),
+        /* INC DE */
+        0x13 =>
+            cmd!(inc::Increment16BitRegister(r16!(DE))),
+        /* INC HL */
+        0x23 =>
+            cmd!(inc::Increment16BitRegister(r16!(HL))),
+        /* INC SP */
+        0x33 =>
+            cmd!(inc::Increment16BitRegister(r16!(SP))),
         /* INC n */
         0x04 | 0x0C | 0x14 | 0x1C | 0x24 | 0x2C | 0x3C =>
             cmd!(inc::IncrementRegister::new(opcode)),
@@ -92,6 +110,9 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         /* JR NZ,n */
         0x20 =>
             cmd!(jump::Jump::nz(i8!(rom))),
+        /* LD (HL+),A */
+        0x22 =>
+            cmd!(load::LoadIncrementHLA),
         /* LD (HL-),A */
         0x32 =>
             cmd!(load::LoadDecrementHLA),
@@ -108,6 +129,8 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         0xCB => parse_prefix_command(rom),
         /* CALL nn */
         0xCD => cmd!(call::Call(u16!(rom))),
+        /* RET */
+        0xC9 => cmd!(ret::Return),
         /* LDH (n),A */
         0xE0 =>
             cmd!(load::LoadRegisterAIntoZeroPageRam(rom[0])),
@@ -132,6 +155,18 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         /* PUSH HL */
         0xE5 =>
             cmd!(push::Push(rp!(HL))),
+        /* POP AF */
+        0xF1 =>
+            cmd!(pop::Pop(rp!(AF))),
+        /* POP BC */
+        0xC1 =>
+            cmd!(pop::Pop(rp!(BC))),
+        /* POP DE */
+        0xD1 =>
+            cmd!(pop::Pop(rp!(DE))),
+        /* POP HL */
+        0xE1 =>
+            cmd!(pop::Pop(rp!(HL))),
         _ => {
             println!("Unknown OpCode {:#X?}", opcode);
             None
@@ -146,8 +181,22 @@ fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn Instruction>> {
         0x00...0x07 => unimplemented!("RLC r"),
         /* RRC r */
         0x08...0x0F => unimplemented!("RRC r"),
-        /* RL r */
-        0x10...0x17 => unimplemented!("RL r"),
+        /* RL B */
+        0x10 => cmd!(alu::RotateRegisterLeft(r8!(B))),
+        /* RL C */
+        0x11 => cmd!(alu::RotateRegisterLeft(r8!(C))),
+        /* RL D */
+        0x12 => cmd!(alu::RotateRegisterLeft(r8!(D))),
+        /* RL E */
+        0x13 => cmd!(alu::RotateRegisterLeft(r8!(E))),
+        /* RL H */
+        0x14 => cmd!(alu::RotateRegisterLeft(r8!(H))),
+        /* RL L */
+        0x15 => cmd!(alu::RotateRegisterLeft(r8!(L))),
+        /* RL A */
+        0x17 => cmd!(alu::RotateRegisterLeft(r8!(A))),
+        /* RL (HL) */
+        0x16 => unimplemented!("RL (HL)"),
         /* RR r */
         0x17...0x1F => unimplemented!("RR r"),
         /* SLA r */
@@ -172,7 +221,7 @@ fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn Instruction>> {
                 0x7F => Register8::A,
                 _ => unreachable!()
             };
-            cmd!(bit::BIT {
+            cmd!(alu::Bit {
                 bit,
                 register
             })

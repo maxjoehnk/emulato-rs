@@ -1,7 +1,7 @@
 use gameboy::GameBoy;
 use cpu::Instruction;
 use std::fmt;
-use cpu::register::{Flags, Register8};
+use cpu::register::{Flags, Register8, Register16};
 
 pub struct IncrementRegister(Register8);
 
@@ -43,6 +43,23 @@ impl Instruction for IncrementRegister {
             gb.register.f.remove(Flags::N);
             gb.register.f.set(Flags::H, half_carry);
         }
+        pc!(gb);
+    }
+}
+
+pub struct Increment16BitRegister(pub Register16);
+
+impl fmt::Debug for Increment16BitRegister {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "INC {:?}", self.0)
+    }
+}
+
+impl Instruction for Increment16BitRegister {
+    fn exec(&self, gb: &mut GameBoy) {
+        let mut value = gb.register.read_16bit_register(&self.0);
+        value += 1;
+        gb.register.write_16bit_register(&self.0, value);
         pc!(gb);
     }
 }
