@@ -58,7 +58,7 @@ impl fmt::Debug for Increment16BitRegister {
 impl Instruction for Increment16BitRegister {
     fn exec(&self, gb: &mut GameBoy) {
         let mut value = gb.register.read_16bit_register(&self.0);
-        value += 1;
+        value = value.wrapping_add(1);
         gb.register.write_16bit_register(&self.0, value);
         pc!(gb);
     }

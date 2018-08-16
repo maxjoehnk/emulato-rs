@@ -4,6 +4,7 @@ use cpu::Instruction;
 
 mod alu;
 mod call;
+mod compare;
 mod dec;
 mod inc;
 mod jump;
@@ -166,6 +167,9 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
         /* POP HL */
         0xE1 =>
             cmd!(pop::Pop(rp!(HL))),
+        /* CP # */
+        0xFE =>
+            cmd!(compare::CompareImmediate(u8!(rom))),
         _ => {
             println!("Unknown OpCode {:#X?}", opcode);
             None

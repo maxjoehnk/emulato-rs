@@ -15,6 +15,6 @@ impl Instruction for Push {
     fn exec(&self, gb: &mut GameBoy) {
         let register = gb.register.pair(&self.0);
         gb.push_to_stack(register);
-        pc!(gb)
+        pc!(gb);
     }
 }

@@ -15,6 +15,6 @@ impl Instruction for Pop {
     fn exec(&self, gb: &mut GameBoy) {
         let value = gb.pop_from_stack();
         gb.register.write_16bit_register(&self.0.into(), value);
-        pc!(gb)
+        pc!(gb);
     }
 }
