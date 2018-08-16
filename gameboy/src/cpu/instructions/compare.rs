@@ -1,6 +1,6 @@
 use gameboy::GameBoy;
 use cpu::Instruction;
-use cpu::register::{Flags, Register8};
+use cpu::register::Flags;
 use std::fmt;
 
 pub struct CompareImmediate(pub u8);
