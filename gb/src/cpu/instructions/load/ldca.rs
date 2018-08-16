@@ -1,5 +1,5 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use std::fmt;
 
 pub struct LoadRamFromRegisterA;
@@ -10,7 +10,7 @@ impl fmt::Debug for LoadRamFromRegisterA {
     }
 }
 
-impl OpCode for LoadRamFromRegisterA {
+impl Instruction for LoadRamFromRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let c = gb.register.c as u16;
         let a = gb.register.a;

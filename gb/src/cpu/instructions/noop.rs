@@ -1,9 +1,9 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 
 #[derive(Debug)]
 pub struct NoOp;
-impl OpCode for NoOp {
+impl Instruction for NoOp {
     fn exec(&self, gb: &mut GameBoy) {
         pc!(gb);
     }

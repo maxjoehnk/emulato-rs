@@ -1,7 +1,6 @@
 use std::fmt;
-use register::Register;
-use opcodes::opcode::OpCode;
-use opcodes;
+use cpu::register::Register;
+use cpu::{instructions, Instruction};
 use byteorder::{LittleEndian, WriteBytesExt};
 
 pub struct GameBoy {
@@ -45,7 +44,7 @@ impl GameBoy {
 }
 
 impl Iterator for GameBoy {
-    type Item = Box<dyn OpCode>;
+    type Item = Box<dyn Instruction>;
 
     fn next(&mut self) -> Option<<Self as Iterator>::Item> {
         let pc = self.register.pc as usize;
@@ -56,6 +55,6 @@ impl Iterator for GameBoy {
 
         let opcode = self.ram[pc];
 
-        opcodes::parse_command(opcode, &self.ram[pc + 1..])
+        instructions::parse_command(opcode, &self.ram[pc + 1..])
     }
 }

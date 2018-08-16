@@ -1,7 +1,7 @@
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use gameboy::GameBoy;
 use std::fmt;
-use register::Register8;
+use cpu::register::Register8;
 
 pub struct Load8Bit {
     register: Register8,
@@ -27,7 +27,7 @@ impl Load8Bit {
     }
 }
 
-impl OpCode for Load8Bit {
+impl Instruction for Load8Bit {
     fn exec(&self, gb: &mut GameBoy) {
         gb.register.write_8bit_register(&self.register, self.data);
         pc!(gb, 2)

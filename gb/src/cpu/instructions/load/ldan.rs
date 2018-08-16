@@ -1,8 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use std::fmt;
-use register::{Register8, Register16};
-
+use cpu::register::{Register8, Register16, RegisterPair};
 
 /**
  * LD A,n
@@ -15,7 +14,7 @@ impl fmt::Debug for LoadRegisterIntoRegisterA {
     }
 }
 
-impl OpCode for LoadRegisterIntoRegisterA {
+impl Instruction for LoadRegisterIntoRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let value = gb.register.get(&self.0);
         gb.register.a = value;
@@ -26,21 +25,7 @@ impl OpCode for LoadRegisterIntoRegisterA {
 /**
  * LD A,n
  */
-pub struct LoadRegisterRamIntoRegisterA(Register16);
-
-impl LoadRegisterRamIntoRegisterA {
-    pub fn bc() -> LoadRegisterRamIntoRegisterA {
-        LoadRegisterRamIntoRegisterA(Register16::BC)
-    }
-
-    pub fn de() -> LoadRegisterRamIntoRegisterA {
-        LoadRegisterRamIntoRegisterA(Register16::DE)
-    }
-
-    pub fn hl() -> LoadRegisterRamIntoRegisterA {
-        LoadRegisterRamIntoRegisterA(Register16::HL)
-    }
-}
+pub struct LoadRegisterRamIntoRegisterA(pub RegisterPair);
 
 impl fmt::Debug for LoadRegisterRamIntoRegisterA {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -48,9 +33,9 @@ impl fmt::Debug for LoadRegisterRamIntoRegisterA {
     }
 }
 
-impl OpCode for LoadRegisterRamIntoRegisterA {
+impl Instruction for LoadRegisterRamIntoRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
-        let location = gb.register.read_16bit_register(&self.0) as usize;
+        let location = gb.register.pair(&self.0) as usize;
         gb.register.a = gb.ram[location];
         pc!(gb);
     }
@@ -69,7 +54,7 @@ impl fmt::Debug for LoadImmediateRamIntoRegisterA {
     }
 }
 
-impl OpCode for LoadImmediateRamIntoRegisterA {
+impl Instruction for LoadImmediateRamIntoRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let location = self.0 as usize;
         gb.register.a = gb.ram[location];

@@ -1,8 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
-use register::Flags;
+use cpu::Instruction;
 use std::fmt;
-use register::Register8;
+use cpu::register::{Flags, Register8};
 
 pub struct IncrementRegister(Register8);
 
@@ -28,10 +27,10 @@ impl fmt::Debug for IncrementRegister {
     }
 }
 
-impl OpCode for IncrementRegister {
+impl Instruction for IncrementRegister {
     fn exec(&self, gb: &mut GameBoy) {
         {
-            let (before, after) = {
+            let (_before, after) = {
                 let register = gb.register.get_mut(&self.0);
                 let before = *register;
                 *register += 1;

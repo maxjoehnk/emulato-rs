@@ -3,16 +3,11 @@ extern crate byteorder;
 extern crate bitflags;
 extern crate tui;
 
-#[macro_use]
-mod macros;
-mod register;
+mod cpu;
 mod gameboy;
-mod opcodes;
 mod gui;
 
-use opcodes::opcode::OpCode;
-
-fn main() {
+fn main() -> std::io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
 
     let use_gui = args.len() > 1 && args[1] == "gui";
@@ -20,22 +15,24 @@ fn main() {
     let mut gb = gameboy::GameBoy::new();
     let mut instructions = Vec::new();
     let mut tui = if use_gui {
-        Some(gui::terminal::build())
+        Some(gui::terminal::build()?)
     }else {
         println!("{:?}", gb);
         None
     };
 
-    while let Some(cmd) = gb.next() {
+    while let Some(instruction) = gb.next() {
         if let Some(ref mut tui) = tui {
-            tui.draw(&gb, &instructions);
+            tui.draw(&gb, &instructions)?;
         }else {
-            println!("{:?}", cmd);
+            println!("{:?}", instruction);
         }
-        instructions.push(format!("{:?}", cmd));
-        cmd.exec(&mut gb);
+        instructions.push(format!("{:?}", instruction));
+        instruction.exec(&mut gb);
         if !use_gui {
             println!("{:?}", gb);
         }
     }
+
+    Ok(())
 }

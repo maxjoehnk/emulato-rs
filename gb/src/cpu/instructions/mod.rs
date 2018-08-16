@@ -1,28 +1,7 @@
-use byteorder::{LittleEndian, ByteOrder, ReadBytesExt};
-use register::TargetRegister;
-use register::{Register8, Register16, RegisterPair};
+use byteorder::{LittleEndian, ByteOrder};
+use cpu::register::{Register8, RegisterPair};
+use cpu::Instruction;
 
-macro_rules! cmd {
-    ($cmd:expr) => (Some(Box::new($cmd)));
-}
-
-macro_rules! u8 {
-    ($rom:expr) => ($rom[0])
-}
-
-macro_rules! u16 {
-    ($rom:expr) => (read_u16($rom))
-}
-
-macro_rules! r8 {
-    ($register:ident) => (Register8::$register);
-}
-
-macro_rules! rp {
-    ($register:ident) => (RegisterPair::$register);
-}
-
-pub mod opcode;
 mod call;
 mod bit;
 mod dec;
@@ -33,15 +12,7 @@ mod load;
 mod xor;
 mod push;
 
-fn read_u16(data: &[u8]) -> u16 {
-    LittleEndian::read_u16(&data[0..2])
-}
-
-fn read_i8(data: &[u8]) -> i8 {
-    data[0] as i8
-}
-
-pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> {
+pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
     match opcode {
         /* NOP */
         0x00 =>
@@ -88,21 +59,42 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
         /* */
         0x06 | 0x0E | 0x16 | 0x1E | 0x26 | 0x2E | 0x3E =>
             cmd!(load::Load8Bit::new(opcode, u8!(rom))),
+        /* LD A,A */
+        0x7F =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(A))),
+        /* LD A,B */
+        0x78 =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(B))),
+        /* LD A,C */
+        0x79 =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(C))),
+        /* LD A,D */
+        0x7A =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(D))),
+        /* LD A,E */
+        0x7B =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(E))),
+        /* LD A,H */
+        0x7C =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(H))),
+        /* LD A,L */
+        0x7D =>
+            cmd!(load::LoadRegisterIntoRegisterA(r8!(L))),
         /* LD A,(BC) */
         0x0A =>
-            cmd!(load::LoadRegisterRamIntoRegisterA::bc()),
+            cmd!(load::LoadRegisterRamIntoRegisterA(rp!(BC))),
         /* LD A,(DE) */
         0x1A =>
-            cmd!(load::LoadRegisterRamIntoRegisterA::de()),
+            cmd!(load::LoadRegisterRamIntoRegisterA(rp!(DE))),
+        /* LD A,(HL) */
+        0x7E =>
+            cmd!(load::LoadRegisterRamIntoRegisterA(rp!(HL))),
         /* JR NZ,n */
         0x20 =>
-            cmd!(jump::Jump::nz(read_i8(rom))),
+            cmd!(jump::Jump::nz(i8!(rom))),
         /* LD (HL-),A */
         0x32 =>
             cmd!(load::LoadDecrementHLA),
-        /* LD A,(HL) */
-        0x7E =>
-            cmd!(load::LoadRegisterRamIntoRegisterA::hl()),
         /* */
         0xAF | 0xA8 | 0xA9 | 0xAA | 0xAB | 0xAC | 0xAD =>
             cmd!(xor::XOR::new(opcode)),
@@ -147,7 +139,7 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> 
     }
 }
 
-fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn opcode::OpCode>> {
+fn parse_prefix_command(rom: &[u8]) -> Option<Box<dyn Instruction>> {
     let opcode = rom[0];
     match opcode {
         /* RLC r */

@@ -1,8 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
-use register::Flags;
+use cpu::Instruction;
 use std::fmt;
-use register::TargetRegister;
+use cpu::register::Flags;
 
 #[derive(Debug)]
 enum JumpMode {
@@ -42,7 +41,7 @@ impl fmt::Debug for Jump {
     }
 }
 
-impl OpCode for Jump {
+impl Instruction for Jump {
     fn exec(&self, gb: &mut GameBoy) {
         let result = match self.mode {
             JumpMode::NZ => !gb.register.f.contains(Flags::Z),

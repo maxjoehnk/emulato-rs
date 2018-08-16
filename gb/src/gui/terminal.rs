@@ -1,19 +1,19 @@
-use std::io;
 use tui::backend::RawBackend;
 use tui::Terminal;
 use tui::widgets::*;
 use tui::layout::*;
 use tui::style::{Style, Color};
+use std::io::Result;
 use gameboy::GameBoy;
-use register::Flags;
+use cpu::register::Flags;
 
 pub struct Interface {
     terminal: Terminal<RawBackend>
 }
 
 impl Interface {
-    pub fn draw(&mut self, gb: &GameBoy, instructions: &Vec<String>) {
-        let size = self.terminal.size().unwrap();
+    pub fn draw(&mut self, gb: &GameBoy, instructions: &Vec<String>) -> Result<()> {
+        let size = self.terminal.size()?;
 
         Group::default()
             .direction(Direction::Horizontal)
@@ -23,7 +23,7 @@ impl Interface {
                 build_sidebar(t, &chunks[1], gb);
             });
 
-        self.terminal.draw();
+        self.terminal.draw()
     }
 }
 
@@ -120,15 +120,15 @@ fn build_flags(terminal: &mut Terminal<RawBackend>, target: &Rect, gb: &GameBoy)
 
 /* TODO: highlight program counter */
 fn build_ram(terminal: &mut Terminal<RawBackend>, target: &Rect, gb: &GameBoy) {
-    const cols: usize = 16;
-    let header = (0..cols).into_iter().map(|i| format!("0{:X?}", i));
-    let mut widths = [2;cols];
+    const COLS: usize = 16;
+    let header = (0..COLS).into_iter().map(|i| format!("0{:X?}", i));
+    let widths = [2; COLS];
     let ram = gb.ram
         .iter()
         .map(|d| format!("{:X?}", d))
         .collect::<Vec<String>>();
     let data = ram
-        .chunks(cols)
+        .chunks(COLS)
         .map(|data| Row::Data(data.into_iter()));
     Table::new(
         header,
@@ -141,13 +141,13 @@ fn build_ram(terminal: &mut Terminal<RawBackend>, target: &Rect, gb: &GameBoy) {
         .render(terminal, target);
 }
 
-pub fn build() -> Interface {
-    let backend = RawBackend::new().unwrap();
-    let mut terminal = Terminal::new(backend).unwrap();
+pub fn build() -> Result<Interface> {
+    let backend = RawBackend::new()?;
+    let mut terminal = Terminal::new(backend)?;
 
-    terminal.clear();
+    terminal.clear()?;
 
-    Interface {
+    Ok(Interface {
         terminal
-    }
+    })
 }

@@ -1,8 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
-use register::Flags;
+use cpu::Instruction;
 use std::fmt;
-use register::RegisterPair;
+use cpu::register::RegisterPair;
 
 pub struct Push(pub RegisterPair);
 
@@ -12,7 +11,7 @@ impl fmt::Debug for Push {
     }
 }
 
-impl OpCode for Push {
+impl Instruction for Push {
     fn exec(&self, gb: &mut GameBoy) {
         let register = gb.register.pair(&self.0);
         gb.push_to_stack(register);

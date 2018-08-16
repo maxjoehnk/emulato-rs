@@ -1,5 +1,5 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use std::fmt;
 
 pub struct LoadDecrementHLA;
@@ -10,7 +10,7 @@ impl fmt::Debug for LoadDecrementHLA {
     }
 }
 
-impl OpCode for LoadDecrementHLA {
+impl Instruction for LoadDecrementHLA {
     fn exec(&self, gb: &mut GameBoy) {
         let hl = gb.register.read_hl();
         let a = gb.register.a;

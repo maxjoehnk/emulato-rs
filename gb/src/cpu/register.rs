@@ -12,24 +12,6 @@ bitflags! {
 }
 
 #[derive(Debug)]
-#[deprecated]
-pub enum TargetRegister {
-    A,
-    B,
-    C,
-    D,
-    E,
-    H,
-    L,
-    SP,
-    PC,
-    AF,
-    BC,
-    DE,
-    HL
-}
-
-#[derive(Debug)]
 pub enum Register8 {
     A,
     B,

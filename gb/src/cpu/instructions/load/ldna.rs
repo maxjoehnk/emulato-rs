@@ -1,7 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use std::fmt;
-use register::{Register8, Register16};
+use cpu::register::{Register8, Register16};
 
 pub struct LoadIntoRegisterFromRegisterA(pub Register8);
 
@@ -11,7 +11,7 @@ impl fmt::Debug for LoadIntoRegisterFromRegisterA {
     }
 }
 
-impl OpCode for LoadIntoRegisterFromRegisterA {
+impl Instruction for LoadIntoRegisterFromRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let a = gb.register.a;
         {
@@ -42,7 +42,7 @@ impl fmt::Debug for LoadIntoRegisterRamFromRegisterA {
     }
 }
 
-impl OpCode for LoadIntoRegisterRamFromRegisterA {
+impl Instruction for LoadIntoRegisterRamFromRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let a = gb.register.a;
         {
@@ -61,7 +61,7 @@ impl fmt::Debug for LoadIntoImmediateRamFromRegisterA {
     }
 }
 
-impl OpCode for LoadIntoImmediateRamFromRegisterA {
+impl Instruction for LoadIntoImmediateRamFromRegisterA {
     fn exec(&self, gb: &mut GameBoy) {
         let a = gb.register.a;
         {

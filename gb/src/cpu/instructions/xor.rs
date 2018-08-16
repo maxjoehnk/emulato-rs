@@ -1,8 +1,7 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
-use register::Flags;
+use cpu::Instruction;
 use std::fmt;
-use register::Register8;
+use cpu::register::{Flags, Register8};
 
 pub struct XOR(Register8);
 
@@ -29,7 +28,7 @@ impl XOR {
     }
 }
 
-impl OpCode for XOR {
+impl Instruction for XOR {
     fn exec(&self, gb: &mut GameBoy) {
         let param = gb.register.read_8bit_register(&self.0);
         let result = gb.register.a ^ param;

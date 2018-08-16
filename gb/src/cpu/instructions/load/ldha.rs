@@ -1,5 +1,5 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use std::fmt;
 
 pub struct LoadRegisterAIntoZeroPageRam(pub u8);
@@ -10,7 +10,7 @@ impl fmt::Debug for LoadRegisterAIntoZeroPageRam {
     }
 }
 
-impl OpCode for LoadRegisterAIntoZeroPageRam {
+impl Instruction for LoadRegisterAIntoZeroPageRam {
     fn exec(&self, gb: &mut GameBoy) {
         let offset = self.0 as u16;
         let a = gb.register.a;

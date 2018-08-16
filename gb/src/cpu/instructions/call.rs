@@ -1,6 +1,5 @@
 use gameboy::GameBoy;
-use opcodes::opcode::OpCode;
-use register::Flags;
+use cpu::Instruction;
 use std::fmt;
 
 pub struct Call(pub u16);
@@ -11,7 +10,7 @@ impl fmt::Debug for Call {
     }
 }
 
-impl OpCode for Call {
+impl Instruction for Call {
     fn exec(&self, gb: &mut GameBoy) {
         let next_instruction = gb.register.pc + 3;
         gb.push_to_stack(next_instruction);

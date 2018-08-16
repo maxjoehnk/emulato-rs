@@ -1,7 +1,6 @@
-use opcodes::opcode::OpCode;
+use cpu::Instruction;
 use gameboy::GameBoy;
 use std::fmt;
-use register::TargetRegister;
 
 pub enum Load16Bit {
     BC(u16),
@@ -20,7 +19,7 @@ impl fmt::Debug for Load16Bit {
         write!(f, "LD {}", register)
     }
 }
-impl OpCode for Load16Bit {
+impl Instruction for Load16Bit {
     fn exec(&self, gb: &mut GameBoy) {
         match self {
             Load16Bit::BC(bytes) => gb.register.write_bc(*bytes),
