@@ -2,6 +2,8 @@ extern crate byteorder;
 #[macro_use]
 extern crate bitflags;
 extern crate tui;
+#[macro_use]
+extern crate load_file;
 
 mod cpu;
 mod gameboy;
@@ -13,6 +15,11 @@ fn main() -> std::io::Result<()> {
     let use_gui = args.len() > 1 && args[1] == "gui";
 
     let mut gb = gameboy::GameBoy::new();
+
+    let firmware = load_bytes!("../assets/DMG_ROM.bin");
+
+    gb.load_firmware(firmware);
+
     let mut instructions = Vec::new();
     let mut tui = if use_gui {
         Some(gui::terminal::build()?)

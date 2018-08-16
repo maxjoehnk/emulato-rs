@@ -7,3 +7,4 @@ authors = ["Max Jöhnk <maxjoehnk@gmail.com>"]
 byteorder = "1.2.4"
 bitflags = "1.0"
 tui = "0.2.3"
+load_file = "1.0"

@@ -16,17 +16,16 @@ impl fmt::Debug for GameBoy {
 
 impl GameBoy {
     pub fn new() -> GameBoy {
-        let mut gb = GameBoy {
+        GameBoy {
             register: Register::default(),
             ram: [0; 0xffff]
-        };
-        let firmware = include_bytes!("../assets/DMG_ROM.bin");
-
-        for (i, byte) in firmware.iter().enumerate() {
-            gb.ram[i] = *byte;
         }
+    }
 
-        return gb;
+    pub fn load_firmware(&mut self, firmware: &[u8]) {
+        for (i, byte) in firmware.iter().enumerate() {
+            self.ram[i] = *byte;
+        }
     }
 
     pub fn ram_mut(&mut self) -> &mut [u8; 0xffff] {
