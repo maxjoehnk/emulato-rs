@@ -202,3 +202,44 @@ impl fmt::Debug for Register {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_should_pair_af() {
+        let mut register = Register::default();
+        register.a = 0xff;
+        register.f = Flags::Z;
+        let af = register.read_af();
+        assert_eq!(af, 0x80ff);
+    }
+
+    #[test]
+    fn it_should_pair_bc() {
+        let mut register = Register::default();
+        register.b = 0xab;
+        register.c = 0xcd;
+        let bc = register.read_bc();
+        assert_eq!(bc, 0xcdab);
+    }
+
+    #[test]
+    fn it_should_pair_de() {
+        let mut register = Register::default();
+        register.d = 0xab;
+        register.e = 0xcd;
+        let de = register.read_de();
+        assert_eq!(de, 0xcdab);
+    }
+
+    #[test]
+    fn it_should_pair_hl() {
+        let mut register = Register::default();
+        register.h = 0xab;
+        register.l = 0xcd;
+        let hl = register.read_hl();
+        assert_eq!(hl, 0xcdab);
+    }
+}
