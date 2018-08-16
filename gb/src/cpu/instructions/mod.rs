@@ -18,8 +18,8 @@ mod pop;
 pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
     match opcode {
         /* NOP */
-        //0x00 =>
-        //    cmd!(noop::NoOp),
+        0x00 =>
+            cmd!(noop::NoOp),
         /* LD BC,nn */
         0x01 =>
             cmd!(load::Load16Bit::BC(u16!(rom))),
