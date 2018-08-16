@@ -15,7 +15,6 @@ mod ret;
 mod pop;
 
 pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
-    println!("{:#x?}", opcode);
     match opcode {
         /* NOP */
         //0x00 =>
