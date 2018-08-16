@@ -118,7 +118,7 @@ pub fn parse_command(opcode: u8, rom: &[u8]) -> Option<Box<dyn Instruction>> {
             cmd!(load::LoadDecrementHLA),
         /* */
         0xAF | 0xA8 | 0xA9 | 0xAA | 0xAB | 0xAC | 0xAD =>
-            cmd!(xor::XOR::new(opcode)),
+            cmd!(xor::Xor::new(opcode)),
         /* LD B,A */
         0x47 =>
             cmd!(load::LoadIntoRegisterFromRegisterA(r8!(B))),

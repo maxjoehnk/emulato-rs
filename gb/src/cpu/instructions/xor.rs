@@ -3,16 +3,16 @@ use cpu::Instruction;
 use std::fmt;
 use cpu::register::{Flags, Register8};
 
-pub struct XOR(Register8);
+pub struct Xor(Register8);
 
-impl fmt::Debug for XOR {
+impl fmt::Debug for Xor {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "XOR {:?}", self.0)
     }
 }
 
-impl XOR {
-    pub fn new(opcode: u8) -> XOR {
+impl Xor {
+    pub fn new(opcode: u8) -> Xor {
         let register = match opcode {
             0xAF => Register8::A,
             0xA8 => Register8::B,
@@ -24,11 +24,11 @@ impl XOR {
             // 0xAE => XOR::HL,
             _ => panic!()
         };
-        XOR(register)
+        Xor(register)
     }
 }
 
-impl Instruction for XOR {
+impl Instruction for Xor {
     fn exec(&self, gb: &mut GameBoy) {
         let param = gb.register.read_8bit_register(&self.0);
         let result = gb.register.a ^ param;
